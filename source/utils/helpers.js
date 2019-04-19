@@ -1,3 +1,10 @@
-/**
- * Created by agurr on 4/19/2019.
- */
+export const getResponse=(list,id, type=false)=>
+{
+    if(list[id])
+    {
+        if(!type)
+            return list[id].message
+        return list[id].type
+    }
+    return null
+};

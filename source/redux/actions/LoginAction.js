@@ -5,3 +5,9 @@ export const LoginForm = (payload)=>{
         payload
     }
 }
+export const LoginSubmit = (payload)=>{
+    return {
+        type:LOGIN.LOGIN_SUBMIT,
+        payload
+    }
+}

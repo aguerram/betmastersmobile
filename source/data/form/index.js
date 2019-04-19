@@ -1,2 +1,2 @@
 
-export const {Button} = require('./Button');
+export const {LoadingButton} = require('./LoadingButton');

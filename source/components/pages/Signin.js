@@ -1,12 +1,14 @@
-import React, { Component } from 'react'
-import { StyleSheet, Text, View, Dimensions, KeyboardAvoidingView } from 'react-native';
-import { Button, Input, CheckBox } from 'react-native-elements'
-import { ToastAndroid } from 'react-native';
+import React, {Component} from 'react'
+import {StyleSheet, Text, View, Dimensions, KeyboardAvoidingView} from 'react-native';
+import { Input, CheckBox} from 'react-native-elements'
+import LoadingButton from '../../data/form/LoadingButton'
+import {ToastAndroid} from 'react-native';
 import style from '../styles/'
 import Icon from '@expo/vector-icons/Feather'
 import {connect} from 'react-redux'
-
-import {LoginForm} from '../../redux/actions/LoginAction'
+import {ID} from '../../utils/config'
+import {getResponse} from '../../utils/helpers'
+import {LoginForm, LoginSubmit} from '../../redux/actions/LoginAction'
 let deviceWidth = Dimensions.get('window').width
 
 class Signin extends Component {
@@ -14,43 +16,62 @@ class Signin extends Component {
         super(props);
         this.state = {
             loading: false,
-            checked:false
+            checked: false
         }
         this.emailInputChange = this.emailInputChange.bind(this);
         this.passwordInputChange = this.passwordInputChange.bind(this);
         this.checkboxChange = this.checkboxChange.bind(this);
+        this.loginSubmit = this.loginSubmit.bind(this);
     }
-    checkboxChange()
-    {
+
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.response[ID.LOGIN.EMAIL]) {
+            console.log(this.props.response[ID.LOGIN.EMAIL].message)
+        }
+        else{
+            console.log('Not recived')
+        }
+    }
+
+    checkboxChange() {
         this.setState({
-            checked:!this.state.checked
-        },()=>{
+            checked: !this.state.checked
+        }, () => {
             this.props.LoginForm({
-                rememberMe:this.state.checked
+                rememberMe: this.state.checked
             })
         })
 
     }
-    emailInputChange(val)
-    {
+
+    emailInputChange(val) {
         this.props.LoginForm({
-            email:val,
-            password:this.props.login.password
+            email: val,
+            password: this.props.login.password
         })
     }
-    passwordInputChange(val)
-    {
+
+    passwordInputChange(val) {
         this.props.LoginForm({
-            password:val,
-            email:this.props.login.email
+            password: val,
+            email: this.props.login.email
         })
     }
+
+    loginSubmit() {
+        this.props.LoginSubmit({
+            email: 'fsdfds'
+        })
+
+    }
+
     render() {
         let state = this.state;
         return (<KeyboardAvoidingView style={style.container} behavior="padding" enabled>
             <Input
                 placeholder='Email'
-                leftIcon={{ type: 'feather', name: 'user' }}
+                leftIcon={{type: 'feather', name: 'user'}}
                 leftIconContainerStyle={{
                     paddingRight: 10
                 }}
@@ -58,41 +79,41 @@ class Signin extends Component {
                 style={{
                     fontSize: 14
                 }}
-
+                errorMessage={getResponse(this.props.response,ID.LOGIN.EMAIL)}
                 textContentType='emailAddress'
                 value={this.props.login.username}
                 name="username"
-                onChangeText = {(val)=>this.emailInputChange(val)}
+                onChangeText={(val) => this.emailInputChange(val)}
+
             />
             <Input
                 placeholder='Password'
-                leftIcon={{ type: 'feather', name: 'lock' }}
+                leftIcon={{type: 'feather', name: 'lock'}}
                 leftIconContainerStyle={{
                     paddingRight: 10
                 }}
                 secureTextEntry
                 textContentType='password'
-                errorMessage=""
-                onChangeText = {(val)=>this.passwordInputChange(val)}
-
+                errorMessage={getResponse(this.props.response,ID.LOGIN.PASSWORD)}
+                onChangeText={(val) => this.passwordInputChange(val)}
                 value={this.props.login.password}
                 name="password"
             />
-            <View style={{ width: deviceWidth }}>
-                <View style={{ position: 'absolute', left: 0 }}>
+            <View style={{width: deviceWidth}}>
+                <View style={{position: 'absolute', left: 0}}>
                     <CheckBox
                         title="Remembre me"
                         checked={this.state.checked}
-                        onPress = {this.checkboxChange}
+                        onPress={this.checkboxChange}
                     />
                 </View>
                 <View style={{
                     width: 100,
                     position: 'absolute',
                     right: 10,
-                    top:5
+                    top: 5
                 }}>
-                    <Button
+                    <LoadingButton
                         loading={state.loading}
                         icon={
                             <Icon
@@ -101,27 +122,19 @@ class Signin extends Component {
                                 size={19}
                             />
                         }
-                        onPress={() => {
-                            this.setState({
-                                loading: true
-                            })
-
-                            setTimeout(() => {
-                                this.setState({
-                                    loading: false
-                                })
-                            }, 2000)
-                        }} title=" Login"/>
+                        _onPress={this.loginSubmit} title=" Login"/>
                 </View>
             </View>
         </KeyboardAvoidingView>);
     }
 }
 
-const stateMapToProps = (state)=>({
-    login:state.login
+const stateMapToProps = (state) => ({
+    login: state.login,
+    response: state.response
 });
 const actionMapToProps = {
-    LoginForm
+    LoginForm,
+    LoginSubmit
 }
-export default connect(stateMapToProps,actionMapToProps)(Signin);
+export default connect(stateMapToProps, actionMapToProps)(Signin);

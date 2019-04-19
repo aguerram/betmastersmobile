@@ -1,3 +1,3 @@
-/**
- * Created by agurr on 4/19/2019.
- */
+export default {
+    'filed_required':'This filed is required'
+}
